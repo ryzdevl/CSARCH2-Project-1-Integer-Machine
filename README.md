@@ -1,6 +1,5 @@
 # CSARCH2-Project-1-Integer-Machine
 # Case Project: Computing machine
-========= Machine 1,2,3,4,5 (Data type machine) =============
 ## General Directions:
 ## • Application platform: Web-based application with a Graphical User Interface (GUI).
 ## • Programming languages: Any programming language of your choice.
