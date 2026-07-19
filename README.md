@@ -1,9 +1,9 @@
 # CSARCH2-Project-1-Integer-Machine
 # Case Project: Computing machine
 ## General Directions:
-• Application platform: Web-based application with a Graphical User Interface (GUI).
-• Programming languages: Any programming language of your choice.
-• Application repository: GitHub (must contain the source code and analysis write-up). Ensure the repository is set to public or that the instructor is granted access.
+• Application platform: Web-based application with a Graphical User Interface (GUI). <br>
+• Programming languages: Any programming language of your choice. <br>
+• Application repository: GitHub (must contain the source code and analysis write-up). Ensure the repository is set to public or that the instructor is granted access. <br>
 
 ## Required Outputs (All stored in the GitHub repository):
 a.) Screenshots: Capture the program output for all possible test cases covering the specifications (normal cases, special cases, edge cases, different inputs, etc.). <br>
