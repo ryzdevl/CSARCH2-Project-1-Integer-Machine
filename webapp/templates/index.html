@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integer Machine</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="site-header">
+  <p class="eyebrow">Machine 1</p>
+  <h1>Integer Machine</h1>
+  <p class="subtitle">Decimal/binary conversion &middot; Booth's algorithm multiplier &middot; non-restoring division</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-target="panel-convert"><span class="tab-num">01</span>Convert</button>
+  <button class="tab-btn" data-target="panel-multiply"><span class="tab-num">02</span>Multiply</button>
+  <button class="tab-btn" data-target="panel-divide"><span class="tab-num">03</span>Divide</button>
+</nav>
+
+<main>
+
+  <!-- ============ CONVERSION ============ -->
+  <section id="panel-convert" class="panel-view active">
+    <div class="card">
+      <h2>Decimal &rarr; Binary</h2>
+      <p class="desc">Convert a decimal value to its unsigned and signed (two's complement) binary representation, at a chosen bit width.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="conv-decimal">Decimal value</label>
+          <input type="text" id="conv-decimal" placeholder="e.g. -25">
+        </div>
+        <div class="field">
+          <label for="conv-bits">Data size (bits)</label>
+          <input type="number" id="conv-bits" min="1" value="8">
+        </div>
+      </div>
+
+      <button class="run-btn" id="conv-run">Convert</button>
+      <div class="error-msg" id="conv-error"></div>
+
+      <div class="register-block" id="conv-results" style="display:none;">
+        <div class="register-row">
+          <span class="register-tag">UNSIGNED</span>
+          <div class="bit-cells" id="conv-unsigned-cells"></div>
+        </div>
+        <div class="register-row">
+          <span class="register-tag">SIGNED</span>
+          <div class="bit-cells" id="conv-signed-cells"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MULTIPLICATION ============ -->
+  <section id="panel-multiply" class="panel-view">
+    <div class="card">
+      <h2>Booth's Algorithm &mdash; Sequential Multiplier</h2>
+      <p class="desc">Add/subtract on register A based on Q0/Q-1, then arithmetic shift right across A:Q:Q-1.</p>
+
+      <div class="toggle-row">
+        <div class="switch" id="mul-toggle"><div class="knob"></div></div>
+        <label id="mul-toggle-label">Input mode: Decimal (click to switch to binary)</label>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="mul-a">Multiplicand</label>
+          <input type="text" id="mul-a" placeholder="e.g. -6">
+        </div>
+        <div class="field">
+          <label for="mul-b">Multiplier</label>
+          <input type="text" id="mul-b" placeholder="e.g. 5">
+        </div>
+        <div class="field">
+          <label for="mul-bits">Data size (bits)</label>
+          <input type="number" id="mul-bits" min="2" value="6">
+        </div>
+      </div>
+
+      <button class="run-btn" id="mul-run">Run Multiplication</button>
+      <div class="error-msg" id="mul-error"></div>
+
+      <div id="mul-results" style="display:none;">
+        <div class="stepper-controls">
+          <button id="mul-prev">&larr; Prev</button>
+          <span class="step-label" id="mul-step-label">Step 0 / 0</span>
+          <button id="mul-next">Next &rarr;</button>
+        </div>
+        <div class="step-op" id="mul-step-op"></div>
+
+        <div class="register-block">
+          <div class="register-row">
+            <span class="register-tag">A</span>
+            <div class="bit-cells" id="mul-a-cells"></div>
+          </div>
+          <div class="register-row">
+            <span class="register-tag">Q</span>
+            <div class="bit-cells" id="mul-q-cells"></div>
+          </div>
+          <div class="register-row">
+            <span class="register-tag">Q-1</span>
+            <div class="bit-cells" id="mul-q1-cells"></div>
+          </div>
+        </div>
+
+        <div class="trace-table-wrap">
+          <table class="trace-table" id="mul-trace-table">
+            <thead><tr><th>Step</th><th>Operation</th><th>A</th><th>Q</th><th>Q-1</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="result-summary">
+          <div class="result-item">
+            <div class="rlabel">Product (binary)</div>
+            <div class="rvalue" id="mul-product-bin"></div>
+          </div>
+          <div class="result-item">
+            <div class="rlabel">Product (decimal)</div>
+            <div class="rvalue" id="mul-product-dec"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DIVISION ============ -->
+  <section id="panel-divide" class="panel-view">
+    <div class="card">
+      <h2>Non-Restoring Division</h2>
+      <p class="desc">Shift A:Q left, add/subtract M based on A's sign, set Q0 accordingly, restore at the end if needed.</p>
+
+      <div class="toggle-row">
+        <div class="switch" id="div-toggle"><div class="knob"></div></div>
+        <label id="div-toggle-label">Input mode: Decimal (click to switch to binary)</label>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="div-a">Dividend</label>
+          <input type="text" id="div-a" placeholder="e.g. 11">
+        </div>
+        <div class="field">
+          <label for="div-b">Divisor</label>
+          <input type="text" id="div-b" placeholder="e.g. 3">
+        </div>
+        <div class="field">
+          <label for="div-bits">Data size (bits)</label>
+          <input type="number" id="div-bits" min="2" value="8">
+        </div>
+      </div>
+
+      <button class="run-btn" id="div-run">Run Division</button>
+      <div class="error-msg" id="div-error"></div>
+
+      <div id="div-results" style="display:none;">
+        <div class="stepper-controls">
+          <button id="div-prev">&larr; Prev</button>
+          <span class="step-label" id="div-step-label">Step 0 / 0</span>
+          <button id="div-next">Next &rarr;</button>
+        </div>
+        <div class="step-op" id="div-step-op"></div>
+
+        <div class="register-block">
+          <div class="register-row">
+            <span class="register-tag">A</span>
+            <div class="bit-cells" id="div-a-cells"></div>
+          </div>
+          <div class="register-row">
+            <span class="register-tag">Q</span>
+            <div class="bit-cells" id="div-q-cells"></div>
+          </div>
+        </div>
+
+        <div class="trace-table-wrap">
+          <table class="trace-table" id="div-trace-table">
+            <thead><tr><th>Step</th><th>Operation</th><th>A</th><th>Q</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="result-summary">
+          <div class="result-item">
+            <div class="rlabel">Quotient</div>
+            <div class="rvalue" id="div-quotient"></div>
+          </div>
+          <div class="result-item">
+            <div class="rlabel">Remainder</div>
+            <div class="rvalue" id="div-remainder"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
