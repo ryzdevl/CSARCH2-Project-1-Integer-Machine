@@ -22,7 +22,6 @@
 
 <main>
 
-  <!-- ============ CONVERSION ============ -->
   <section id="panel-convert" class="panel-view active">
     <div class="card">
       <h2>Decimal &rarr; Binary</h2>
@@ -35,11 +34,23 @@
         </div>
         <div class="field">
           <label for="conv-bits">Data size (bits)</label>
-          <input type="number" id="conv-bits" min="1" value="8">
+          <div class="bits-row">
+            <input type="number" id="conv-bits" min="1" value="8" class="bits-input">
+            <div class="bits-presets" data-target="conv-bits">
+              <button type="button" class="preset-btn" data-val="4">4</button>
+              <button type="button" class="preset-btn active" data-val="8">8</button>
+              <button type="button" class="preset-btn" data-val="16">16</button>
+              <button type="button" class="preset-btn" data-val="32">32</button>
+              <button type="button" class="preset-btn" data-val="64">64</button>
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Triggers the fetch() call to /api/convert in script.js -->
       <button class="run-btn" id="conv-run">Convert</button>
+
+      <!-- Shown only for request-level errors (e.g. non-numeric input) -->
       <div class="error-msg" id="conv-error"></div>
 
       <div class="register-block" id="conv-results" style="display:none;">
@@ -47,15 +58,18 @@
           <span class="register-tag">UNSIGNED</span>
           <div class="bit-cells" id="conv-unsigned-cells"></div>
         </div>
+        <p class="reg-summary" id="conv-unsigned-summary"></p>
+
         <div class="register-row">
           <span class="register-tag">SIGNED</span>
           <div class="bit-cells" id="conv-signed-cells"></div>
         </div>
+        <p class="reg-summary" id="conv-signed-summary"></p>
       </div>
     </div>
   </section>
 
-  <!-- ============ MULTIPLICATION ============ -->
+
   <section id="panel-multiply" class="panel-view">
     <div class="card">
       <h2>Booth's Algorithm &mdash; Sequential Multiplier</h2>
@@ -77,10 +91,20 @@
         </div>
         <div class="field">
           <label for="mul-bits">Data size (bits)</label>
-          <input type="number" id="mul-bits" min="2" value="6">
+          <div class="bits-row">
+            <input type="number" id="mul-bits" min="2" value="6" class="bits-input">
+            <div class="bits-presets" data-target="mul-bits">
+              <button type="button" class="preset-btn" data-val="4">4</button>
+              <button type="button" class="preset-btn active" data-val="6">6</button>
+              <button type="button" class="preset-btn" data-val="8">8</button>
+              <button type="button" class="preset-btn" data-val="16">16</button>
+              <button type="button" class="preset-btn" data-val="32">32</button>
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Triggers the fetch() call to /api/multiply in script.js -->
       <button class="run-btn" id="mul-run">Run Multiplication</button>
       <div class="error-msg" id="mul-error"></div>
 
@@ -110,7 +134,7 @@
         <div class="trace-table-wrap">
           <table class="trace-table" id="mul-trace-table">
             <thead><tr><th>Step</th><th>Operation</th><th>A</th><th>Q</th><th>Q-1</th></tr></thead>
-            <tbody></tbody>
+            <tbody><!-- populated by populateTraceTable() in script.js --></tbody>
           </table>
         </div>
 
@@ -128,7 +152,6 @@
     </div>
   </section>
 
-  <!-- ============ DIVISION ============ -->
   <section id="panel-divide" class="panel-view">
     <div class="card">
       <h2>Non-Restoring Division</h2>
@@ -150,10 +173,19 @@
         </div>
         <div class="field">
           <label for="div-bits">Data size (bits)</label>
-          <input type="number" id="div-bits" min="2" value="8">
+          <div class="bits-row">
+            <input type="number" id="div-bits" min="2" value="8" class="bits-input">
+            <div class="bits-presets" data-target="div-bits">
+              <button type="button" class="preset-btn" data-val="4">4</button>
+              <button type="button" class="preset-btn active" data-val="8">8</button>
+              <button type="button" class="preset-btn" data-val="16">16</button>
+              <button type="button" class="preset-btn" data-val="32">32</button>
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Triggers the fetch() call to /api/divide in script.js -->
       <button class="run-btn" id="div-run">Run Division</button>
       <div class="error-msg" id="div-error"></div>
 
@@ -179,7 +211,7 @@
         <div class="trace-table-wrap">
           <table class="trace-table" id="div-trace-table">
             <thead><tr><th>Step</th><th>Operation</th><th>A</th><th>Q</th></tr></thead>
-            <tbody></tbody>
+            <tbody><!-- populated by populateTraceTable() in script.js --></tbody>
           </table>
         </div>
 
@@ -198,6 +230,10 @@
   </section>
 
 </main>
+
+<footer class="footbar">
+  <span>CSARCH2 · Machine Project · Group 1 · Integer Machine Simulator</span>
+</footer>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

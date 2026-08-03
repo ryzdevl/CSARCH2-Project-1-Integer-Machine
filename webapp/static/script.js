@@ -30,6 +30,31 @@ wireToggle('mul-toggle', 'mul-toggle-label');
 wireToggle('div-toggle', 'div-toggle-label');
 
 // ---------------------------------------------------------------------------
+// Bit-size preset buttons (4 / 8 / 16 / 32 / 64) beside each bits field
+// ---------------------------------------------------------------------------
+
+function wireBitsPresets(groupEl) {
+  const targetId = groupEl.dataset.target;
+  const input = document.getElementById(targetId);
+  const buttons = groupEl.querySelectorAll('.preset-btn');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      input.value = btn.dataset.val;
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Typing the custom value for bits will clears the preset highlight unless it matches one
+  input.addEventListener('input', () => {
+    buttons.forEach(b => b.classList.toggle('active', b.dataset.val === input.value));
+  });
+}
+
+document.querySelectorAll('.bits-presets').forEach(wireBitsPresets);
+
+// ---------------------------------------------------------------------------
 // Shared helpers
 // ---------------------------------------------------------------------------
 
@@ -92,6 +117,7 @@ document.getElementById('conv-run').addEventListener('click', async () => {
     document.getElementById('conv-results').style.display = 'block';
 
     const unsignedCells = document.getElementById('conv-unsigned-cells');
+    const unsignedSummary = document.getElementById('conv-unsigned-summary');
     if (data.unsigned_error) {
       unsignedCells.innerHTML = '';
       const span = document.createElement('span');
@@ -99,11 +125,15 @@ document.getElementById('conv-run').addEventListener('click', async () => {
       span.style.marginTop = '0';
       span.textContent = data.unsigned_error;
       unsignedCells.appendChild(span);
+      unsignedSummary.textContent = '';
     } else {
       renderBitCells('conv-unsigned-cells', data.unsigned_binary);
+      unsignedSummary.textContent =
+        `${data.decimal} = ${data.unsigned_binary}₂ (${data.bits}-bit unsigned)`;
     }
 
     const signedCells = document.getElementById('conv-signed-cells');
+    const signedSummary = document.getElementById('conv-signed-summary');
     if (data.signed_error) {
       signedCells.innerHTML = '';
       const span = document.createElement('span');
@@ -111,8 +141,11 @@ document.getElementById('conv-run').addEventListener('click', async () => {
       span.style.marginTop = '0';
       span.textContent = data.signed_error;
       signedCells.appendChild(span);
+      signedSummary.textContent = '';
     } else {
       renderBitCells('conv-signed-cells', data.signed_binary);
+      signedSummary.textContent =
+        `${data.decimal} = ${data.signed_binary}₂ (${data.bits}-bit signed, two's complement)`;
     }
   } catch (err) {
     showError('conv-error', err.message);
@@ -120,7 +153,7 @@ document.getElementById('conv-run').addEventListener('click', async () => {
 });
 
 // ---------------------------------------------------------------------------
-// Generic trace-stepper factory (shared by Multiply and Divide)
+// trace-stepper factory (shared by Multiply and Divide functions)
 // ---------------------------------------------------------------------------
 
 function makeStepper(config) {
@@ -145,7 +178,7 @@ function makeStepper(config) {
     prevBtn.disabled = index === 0;
     nextBtn.disabled = index === config.trace.length - 1;
 
-    // highlight current row in the trace table
+    // highlights the current row in the trace table
     const rows = config.tableBodyEl.querySelectorAll('tr');
     rows.forEach((r, i) => r.classList.toggle('current-step', i === index));
     if (rows[index]) {
