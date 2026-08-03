@@ -4,7 +4,7 @@ Machine 1: Integer Machine
 Process: Integer arithmetic and conversion.
 
 1. Decimal <-> Unsigned/Signed Binary conversion (with bounds checking)
-2. Multiplication  -> Booth's Algorithm (sequential circuit binary multiplier)
+2. Multiplication  -> Sequential circuit binary multiplier
    Division        -> Non-Restoring Division
    Both support decimal or binary input, and print a full step-by-step trace.
 """
@@ -98,7 +98,7 @@ def _sign_bit(value, bits):
 
 def booth_multiplier(multiplicand, multiplier, bits, binary_input=False):
     """
-    Multiplies `multiplicand` x `multiplier` using Booth's Algorithm.
+    Multiplies `multiplicand` x `multiplier` using Sequential Circuit Multiplication.
     Registers A, M, Q are all `bits` wide (two's complement). Q-1 is a single
     guard bit. Returns a dict with the trace (list of step dicts) and result.
     """
@@ -273,7 +273,7 @@ def print_conversion(decimal, bits):
 
 def print_multiplication_trace(a, b, bits, binary_input=False):
     r = booth_multiplier(a, b, bits, binary_input)
-    print(f"\n--- Booth's Algorithm: {a} x {b} ({bits}-bit) ---")
+    print(f"\n--- Sequential Circuit Multiplier's Algorithm: {a} x {b} ({bits}-bit) ---")
     if r["error"]:
         print(r["error"])
         return
@@ -303,5 +303,5 @@ if __name__ == "__main__":
     print_conversion(-25, 8)   # no unsigned since negative range
     print_conversion(500, 8)   # out of range, and triggers error checking
 
-    print_multiplication_trace(-6, 5, 6)   # -6 x 5, booth's algo. demonstration = -30
+    print_multiplication_trace(-6, 5, 6)   # -6 x 5, seq. multiplier's algo. demonstration = -30
     print_division_trace(11, 3, 8)         # 11/3 Q should be 3 and A should be 2
