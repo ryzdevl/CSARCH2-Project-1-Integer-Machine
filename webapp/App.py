@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from integer_machine import (
+from .integer_machine import (
     convert_decimal,
     sequential_multiplier,
     non_restoring_division,
