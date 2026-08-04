@@ -1,4 +1,3 @@
-<img width="1893" height="788" alt="architecture-overview" src="https://github.com/user-attachments/assets/dff33301-1cd5-430f-b5e8-d1ded1a56c02" />
 # CSARCH2 S40 GROUP 1 ANALYSIS WRITE UP: INTEGER MACHINE
 This README documents the technical discussions, features, and test cases of our project. Our web-based calculator performs binary arithmetic operations including signed/unsigned conversions, sequential binary multiplication, and non-restoring division. 
 
