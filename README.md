@@ -164,7 +164,8 @@ Each section displays:
 ---
 
 ## 4. Unlisted YouTube Link
-
+(Insert Link for Demo)
+*Note: Given the time constraint we only chose to demo selected inputs. Other test cases can be found inside the screenshots-updated folder.*
 ---
 
 ## 5. Declaration of AI Usage
