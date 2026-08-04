@@ -95,7 +95,7 @@ Each section displays:
 |----------|---------|
 | A | Accumulator (initially 0) |
 | Q | Multiplier |
-| Q₋₁ | Extra bit (initially 0) |
+| Q<sub>-1</sub> | Extra bit (initially 0) |
 | M | Multiplicand |
 
 **Process:**
