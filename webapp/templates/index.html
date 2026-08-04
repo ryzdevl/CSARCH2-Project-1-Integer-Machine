@@ -11,7 +11,7 @@
 <header class="site-header">
   <p class="eyebrow">Machine 1</p>
   <h1>Integer Machine</h1>
-  <p class="subtitle">Decimal/Binary Signed & Unsigned Conversion &middot; Sequential Circuit Binary Multiplier &middot; Non-Restoring Division</p>
+  <p class="subtitle">Decimal/binary conversion &middot; sequential circuit binary multiplier &middot; non-restoring division</p>
 </header>
 
 <nav class="tabs">
@@ -27,6 +27,7 @@
       <h2>Decimal &rarr; Binary</h2>
       <p class="desc">Convert a decimal value to its unsigned and signed (two's complement) binary representation, at a chosen bit width.</p>
 
+      <!-- Input fields: decimal value + data size (bits), per spec 1a/1b -->
       <div class="field-row">
         <div class="field">
           <label for="conv-decimal">Decimal value</label>
@@ -34,6 +35,7 @@
         </div>
         <div class="field">
           <label for="conv-bits">Data size (bits)</label>
+
           <div class="bits-row">
             <input type="number" id="conv-bits" min="1" value="8" class="bits-input">
             <div class="bits-presets" data-target="conv-bits">
@@ -69,17 +71,17 @@
     </div>
   </section>
 
-
   <section id="panel-multiply" class="panel-view">
     <div class="card">
-      <h2>Sequential Circuit Binary Multiplier </h2>
-      <p class="desc">Add/subtract on register A based on Q0/Q-1, then arithmetic shift right across A:Q:Q-1.</p>
+      <h2>Sequential Circuit Binary Multiplier</h2>
+      <p class="desc">Add/subtract on register A based on Q0/Q-1, then arithmetic shift right across A:Q:Q-1 (sign-extended).</p>
 
       <div class="toggle-row">
         <div class="switch" id="mul-toggle"><div class="knob"></div></div>
         <label id="mul-toggle-label">Input mode: Decimal (click to switch to binary)</label>
       </div>
 
+      <!-- Operand + bit-size inputs, per spec 2a/2b -->
       <div class="field-row">
         <div class="field">
           <label for="mul-a">Multiplicand</label>
@@ -140,7 +142,11 @@
 
         <div class="result-summary">
           <div class="result-item">
-            <div class="rlabel">Product (binary)</div>
+            <div class="rlabel">Sign</div>
+            <div class="rvalue" id="mul-sign"></div>
+          </div>
+          <div class="result-item">
+            <div class="rlabel">Product (binary, two's complement)</div>
             <div class="rvalue" id="mul-product-bin"></div>
           </div>
           <div class="result-item">
@@ -157,11 +163,13 @@
       <h2>Non-Restoring Division</h2>
       <p class="desc">Shift A:Q left, add/subtract M based on A's sign, set Q0 accordingly, restore at the end if needed.</p>
 
+      <!-- Same decimal/binary toggle pattern as the Multiply panel -->
       <div class="toggle-row">
         <div class="switch" id="div-toggle"><div class="knob"></div></div>
         <label id="div-toggle-label">Input mode: Decimal (click to switch to binary)</label>
       </div>
 
+      <!-- Operand + bit-size inputs, per spec 2a/2b -->
       <div class="field-row">
         <div class="field">
           <label for="div-a">Dividend</label>
