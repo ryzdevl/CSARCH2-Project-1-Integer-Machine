@@ -1,7 +1,7 @@
 # CSARCH2 S40 GROUP 1 ANALYSIS WRITE UP: INTEGER MACHINE
 This README documents the technical discussions, features, and test cases of our project. Our web-based calculator performs binary arithmetic operations including signed/unsigned conversions, sequential binary multiplication, and non-restoring division. 
 
-Course: CSARCH2 (Computer Architecture)
+Course: CSARCH2 (Computer Architecture) /n
 Instructor: Ronald Pascual
 De La Salle University - College of Computer Studies
 Date: 04 / 08 / 2026
