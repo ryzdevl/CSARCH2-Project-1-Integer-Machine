@@ -33,7 +33,7 @@ The project focuses on a max of 64-bit binary operations, with support for both 
 ## 2. System Design
 
 ### 2.1 Architecture Overview
-(insert photos)
+<img width="1920" height="1080" alt="2" src="https://github.com/user-attachments/screenshots - updated/architecture-overview" />
 
 ### 2.2 Technology Stack
 
@@ -84,8 +84,6 @@ Each section displays:
    - Convert absolute value to binary
    - Add 2 ^ data size to the number
    - Return binary string
-
----
 
 ### 3.2 Sequential Binary Multiplication
 
