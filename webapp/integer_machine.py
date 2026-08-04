@@ -4,7 +4,7 @@ Machine 1: Integer Machine
 Process: Integer arithmetic and conversion.
 
 1. Decimal <-> Unsigned/Signed Binary conversion (with bounds checking)
-2. Multiplication  -> Sequential circuit binary multiplier
+2. Multiplication  -> Booth's Algorithm (sequential circuit binary multiplier)
    Division        -> Non-Restoring Division
    Both support decimal or binary input, and print a full step-by-step trace.
 """
@@ -43,7 +43,7 @@ def to_signed_binary(decimal, bits):
                        f"representation. Valid range is [{min_val}, {max_val}].")
 
     if decimal < 0:
-        decimal = (1 << bits) + decimal  # encoding for the two's complement
+        decimal = (1 << bits) + decimal  # two's complement encoding
 
     return format(decimal, f'0{bits}b'), None
 
@@ -69,6 +69,11 @@ def convert_decimal(decimal, bits):
         "signed_binary": signed_bin,
         "signed_error": signed_err,
     }
+
+
+# ---------------------------------------------------------------------------
+# Helpers shared by multiplier & divider
+# ---------------------------------------------------------------------------
 
 def _normalize_operand(value, bits, is_binary_input):
     """
@@ -96,11 +101,12 @@ def _normalize_operand(value, bits, is_binary_input):
 def _sign_bit(value, bits):
     return (value >> (bits - 1)) & 1
 
-def booth_multiplier(multiplicand, multiplier, bits, binary_input=False):
+def sequential_multiplier(multiplicand, multiplier, bits, binary_input=False):
     """
-    Multiplies `multiplicand` x `multiplier` using Sequential Circuit Multiplication.
-    Registers A, M, Q are all `bits` wide (two's complement). Q-1 is a single
-    guard bit. Returns a dict with the trace (list of step dicts) and result.
+    Multiplies `multiplicand` x `multiplier` using Booth's Algorithm
+    (the sequential circuit binary multiplier for two's complement
+    operands). Returns a dict with the trace (list of step dicts) and
+    result.
     """
     mask = (1 << bits) - 1
     trace = []
@@ -113,7 +119,7 @@ def booth_multiplier(multiplicand, multiplier, bits, binary_input=False):
         return {"error": err}
 
     M = M_dec & mask          # multiplicand, n-bit two's complement pattern 
-    neg_M = (-M_dec) & mask   # finding the negative m for the multiplier in case of subtraction
+    neg_M = (-M_dec) & mask   # precomputed -M, for the subtract case
     A = 0
     Q = Q_dec & mask
     Q_1 = 0
@@ -126,20 +132,21 @@ def booth_multiplier(multiplicand, multiplier, bits, binary_input=False):
     for i in range(1, bits + 1):
         q0 = Q & 1
         if q0 == 0 and Q_1 == 1:
-            op = "A = A + M"
+            op = "Q0Q-1 = 01: A = A + M"
             A = (A + M) & mask
         elif q0 == 1 and Q_1 == 0:
-            op = "A = A - M  (A + (-M))"
+            op = "Q0Q-1 = 10: A = A - M"
             A = (A + neg_M) & mask
         else:
-            op = "No arithmetic op (Q0Q-1 = 00 or 11)"
+            op = f"Q0Q-1 = {q0}{Q_1}: no operation"
 
         trace.append({
             "step": f"{i}{chr(0x61)}", "operation": op,
             "A": format(A, f'0{bits}b'), "Q": format(Q, f'0{bits}b'), "Q-1": Q_1
         })
 
-        # The arithmetic shift right function for the sequential circuit multiplication
+        # Arithmetic shift right across A : Q : Q-1 — the sign bit of A is
+        # preserved (sign-extended), e.g. 11101 -> 11110.
         sign = _sign_bit(A, bits)
         new_Q_1 = Q & 1
         Q = ((Q >> 1) | ((A & 1) << (bits - 1))) & mask
@@ -151,10 +158,10 @@ def booth_multiplier(multiplicand, multiplier, bits, binary_input=False):
             "A": format(A, f'0{bits}b'), "Q": format(Q, f'0{bits}b'), "Q-1": Q_1
         })
 
-    # Final product = (A:Q) as a 2*bits-wide two's complement number
     combined = (A << bits) | Q
-    if combined >= (1 << (2 * bits - 1)):
-        result_decimal = combined - (1 << (2 * bits))
+    product_width = 2 * bits
+    if combined >= (1 << (product_width - 1)):
+        result_decimal = combined - (1 << product_width)
     else:
         result_decimal = combined
 
@@ -164,9 +171,15 @@ def booth_multiplier(multiplicand, multiplier, bits, binary_input=False):
         "multiplier_decimal": Q_dec,
         "bits": bits,
         "trace": trace,
-        "product_binary": format(combined & ((1 << (2 * bits)) - 1), f'0{2*bits}b'),
+        "product_binary": format(combined & ((1 << product_width) - 1), f'0{product_width}b'),
+        "result_negative": result_decimal < 0,
         "product_decimal": result_decimal,
     }
+
+
+# ---------------------------------------------------------------------------
+# PART 2b: NON-RESTORING DIVISION
+# ---------------------------------------------------------------------------
 
 def non_restoring_division(dividend, divisor, bits, binary_input=False):
     """
@@ -201,7 +214,7 @@ def non_restoring_division(dividend, divisor, bits, binary_input=False):
     })
 
     for i in range(1, bits + 1):
-        # The arithmetic shift left A:Q by 1 (then, insert 0 into Q's LSB)
+        # Shift A:Q left by 1 (insert 0 into Q's LSB)
         msb_Q = (Q >> (bits - 1)) & 1
         A = ((A << 1) | msb_Q) & mask
         Q = (Q << 1) & mask
@@ -234,7 +247,7 @@ def non_restoring_division(dividend, divisor, bits, binary_input=False):
             "A": format(A, f'0{bits}b'), "Q": format(Q, f'0{bits}b')
         })
 
-    # Final step, if a is negative, then we restore it
+    # Final correction: if A is negative, restore by adding M back
     if _sign_bit(A, bits) == 1:
         A = (A + M) & mask
         trace.append({
@@ -258,6 +271,10 @@ def non_restoring_division(dividend, divisor, bits, binary_input=False):
     }
 
 
+# ---------------------------------------------------------------------------
+# DEMO / CLI
+# ---------------------------------------------------------------------------
+
 def print_conversion(decimal, bits):
     result = convert_decimal(decimal, bits)
     print(f"\n--- Decimal {decimal} to Binary ({bits}-bit) ---")
@@ -272,14 +289,14 @@ def print_conversion(decimal, bits):
 
 
 def print_multiplication_trace(a, b, bits, binary_input=False):
-    r = booth_multiplier(a, b, bits, binary_input)
-    print(f"\n--- Sequential Circuit Multiplier's Algorithm: {a} x {b} ({bits}-bit) ---")
+    r = sequential_multiplier(a, b, bits, binary_input)
+    print(f"\n--- Sequential Circuit Binary Multiplier: {a} x {b} ({bits}-bit) ---")
     if r["error"]:
         print(r["error"])
         return
-    print(f"{'Step':>6} | {'Operation':<32} | {'A':<{bits}} | {'Q':<{bits}} | Q-1")
+    print(f"{'Step':>6} | {'Operation':<24} | E | {'A':<{bits}} | {'Q':<{bits}}")
     for row in r["trace"]:
-        print(f"{str(row['step']):>6} | {row['operation']:<32} | {row['A']:<{bits}} | {row['Q']:<{bits}} | {row['Q-1']}")
+        print(f"{str(row['step']):>6} | {row['operation']:<24} | {row['E']} | {row['A']:<{bits}} | {row['Q']:<{bits}}")
     print(f"\nProduct (binary, {2*bits} bits): {r['product_binary']}")
     print(f"Product (decimal): {r['product_decimal']}")
 
@@ -298,10 +315,10 @@ def print_division_trace(a, b, bits, binary_input=False):
 
 
 if __name__ == "__main__":
-    # Sample runs 
+    # Sample runs demonstrating each feature
     print_conversion(25, 8)
-    print_conversion(-25, 8)   # no unsigned since negative range
-    print_conversion(500, 8)   # out of range, and triggers error checking
+    print_conversion(-25, 8)
+    print_conversion(500, 8)   # deliberately out of range -> triggers error checking
 
-    print_multiplication_trace(-6, 5, 6)   # -6 x 5, seq. multiplier's algo. demonstration = -30
-    print_division_trace(11, 3, 8)         # 11/3 Q should be 3 and A should be 2
+    print_multiplication_trace(11, 13, 8)  # (11 x 13 = 143)
+    print_division_trace(11, 3, 8)         # 11 / 3 -> quotient 3, remainder 2

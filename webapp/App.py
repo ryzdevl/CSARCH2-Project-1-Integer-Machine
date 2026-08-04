@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from integer_machine import (
     convert_decimal,
-    booth_multiplier,
+    sequential_multiplier,
     non_restoring_division,
 )
 
@@ -50,7 +50,7 @@ def api_multiply():
         except (TypeError, ValueError):
             return jsonify({"error": "Operands must be valid decimal integers."}), 400
 
-    result = booth_multiplier(multiplicand, multiplier, bits, binary_input)
+    result = sequential_multiplier(multiplicand, multiplier, bits, binary_input)
     if result.get("error"):
         return jsonify({"error": result["error"]}), 400
     return jsonify(result)
