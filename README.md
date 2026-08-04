@@ -167,7 +167,7 @@ Each section displays:
 
 [(CSARCH2 S40 GROUP 1 DEMO VIDEO)](https://youtu.be/iF_VCFmzHhM?si=UvYSixOR2f5y4Hx_)
 
-Note: Given the time constraint we only chose to demo selected inputs. Other test cases can be found inside the screenshots-updated folder.
+*Note: Given the time constraint we only chose to demo selected inputs. Other test cases can be found inside the screenshots-updated folder.*
 
 ---
 
