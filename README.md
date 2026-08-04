@@ -108,21 +108,21 @@ Each section displays:
    - Set M = multiplicand (in two's complement)
    - Set neg_M = two's complement of M (for subtraction)
    - Set Q = multiplier (in two's complement)
-   - Set Q sub-1 = 0
-4. Save current values of A, Q, and Q sub-1 as initial step
+   - Set Q<sub>-1</sub> = 0
+4. Save current values of A, Q, and Q<sub>-1</sub> as initial step
 5. Repeat for each bit
-   - Check Q and Q sub-1 (the two rightmost bits)
-      - Look at Q's least significant bit (Q₀) and the guard bit (Q₋₁)
-      - If Q Q sub-1 = 01: Add multiplicand to A (A = A + M)
-      - If Q Q sub-1 = 10: Subtract multiplicand from A (A = A - M)
-      - If Q Q sub-1 = 00 or 11: No arithmetic operation
-   - Save A, Q, Q sub-1 after arithmetic operation
+   - Check Q and Q<sub>-1</sub> (the two rightmost bits)
+      - Look at Q's least significant bit (Q₀) and the guard bit (Q<sub>-1</sub>)
+      - If Q Q<sub>-1</sub> = 01: Add multiplicand to A (A = A + M)
+      - If Q Q<sub>-1</sub> = 10: Subtract multiplicand from A (A = A - M)
+      - If Q Q<sub>-1</sub> = 00 or 11: No arithmetic operation
+   - Save A, Q, Q<sub>-1</sub> after arithmetic operation
    - Arithmetic Shift Right (ASR)
-      - Save the current LSB of Q as the new Q₋₁
+      - Save the current LSB of Q as the new Q<sub>-1</sub>
       - Shift Q right by 1, bringing in the LSB of A into Q's MSB
       - Shift A right by 1, preserving the sign bit (MSB)
       - Mask to keep only 'bits' number of bits
-   - Save A, Q, Q sub-1 after shift operation
+   - Save A, Q, Q<sub>-1</sub> after shift operation
 7. Return binary and decimal representation of the product
 
 ### 3.3 Non-Restoring Division
