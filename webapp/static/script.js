@@ -129,7 +129,7 @@ document.getElementById('conv-run').addEventListener('click', async () => {
     } else {
       renderBitCells('conv-unsigned-cells', data.unsigned_binary);
       unsignedSummary.textContent =
-        `✓ ${data.decimal} = ${data.unsigned_binary}₂ (${data.bits}-bit unsigned)`;
+        `${data.decimal} = ${data.unsigned_binary} (${data.bits}-bit unsigned)`;
     }
 
     const signedCells = document.getElementById('conv-signed-cells');
@@ -145,7 +145,7 @@ document.getElementById('conv-run').addEventListener('click', async () => {
     } else {
       renderBitCells('conv-signed-cells', data.signed_binary);
       signedSummary.textContent =
-        `✓ ${data.decimal} = ${data.signed_binary}₂ (${data.bits}-bit signed, two's complement)`;
+        `${data.decimal} = ${data.signed_binary} (${data.bits}-bit signed, two's complement)`;
     }
   } catch (err) {
     showError('conv-error', err.message);
