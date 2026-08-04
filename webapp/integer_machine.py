@@ -1,12 +1,14 @@
 """
-Machine 1: Integer Machine
-===========================
+CSARCH2 Case Study Project #1
+Section: S40
+Group 1 - Adriano, Besa, Guerrero, Malapitan, Pallarca
+Integer Machine
 Process: Integer arithmetic and conversion.
 
 1. Decimal <-> Unsigned/Signed Binary conversion (with bounds checking)
-2. Multiplication  -> Booth's Algorithm (sequential circuit binary multiplier)
+2. Multiplication  -> Sequential circuit binary multiplier
    Division        -> Non-Restoring Division
-   Both support decimal or binary input, and print a full step-by-step trace.
+   Both supports decimal input or binary input, and then print a full step-by-step trace.
 """
 
 def to_unsigned_binary(decimal, bits):
@@ -58,7 +60,7 @@ def binary_to_decimal(binary_str, signed=False):
 
 
 def convert_decimal(decimal, bits):
-    """Convenience wrapper: produce both unsigned and signed binary + errors."""
+    """Convenience wrapper: this fucntion will produce both unsigned and signed binary + errors."""
     unsigned_bin, unsigned_err = to_unsigned_binary(decimal, bits)
     signed_bin, signed_err = to_signed_binary(decimal, bits)
     return {
@@ -77,7 +79,7 @@ def convert_decimal(decimal, bits):
 
 def _normalize_operand(value, bits, is_binary_input):
     """
-    Accepts either a decimal int/str or a binary string, returns the decimal
+    Accepts either a decimal integer/string or a binary string, returns the decimal
     (signed, two's-complement-interpreted) integer value, plus an error if
     it doesn't fit in `bits`.
     """
@@ -103,7 +105,7 @@ def _sign_bit(value, bits):
 
 def sequential_multiplier(multiplicand, multiplier, bits, binary_input=False):
     """
-    Multiplies `multiplicand` x `multiplier` using Booth's Algorithm
+    Multiplies `multiplicand` x `multiplier` using Sequential Circuit Technique
     (the sequential circuit binary multiplier for two's complement
     operands). Returns a dict with the trace (list of step dicts) and
     result.
@@ -118,8 +120,8 @@ def sequential_multiplier(multiplicand, multiplier, bits, binary_input=False):
     if err:
         return {"error": err}
 
-    M = M_dec & mask          # multiplicand, n-bit two's complement pattern 
-    neg_M = (-M_dec) & mask   # precomputed -M, for the subtract case
+    M = M_dec & mask          # multiplicand, the n-bit two's complement pattern 
+    neg_M = (-M_dec) & mask   # precomputed -M, for the subtract case (negative M because A = A-M is also equal to the A = A+(-M)
     A = 0
     Q = Q_dec & mask
     Q_1 = 0
@@ -175,11 +177,6 @@ def sequential_multiplier(multiplicand, multiplier, bits, binary_input=False):
         "result_negative": result_decimal < 0,
         "product_decimal": result_decimal,
     }
-
-
-# ---------------------------------------------------------------------------
-# PART 2b: NON-RESTORING DIVISION
-# ---------------------------------------------------------------------------
 
 def non_restoring_division(dividend, divisor, bits, binary_input=False):
     """
@@ -247,7 +244,7 @@ def non_restoring_division(dividend, divisor, bits, binary_input=False):
             "A": format(A, f'0{bits}b'), "Q": format(Q, f'0{bits}b')
         })
 
-    # Final correction: if A is negative, restore by adding M back
+    # Final correction ver 1.3 04/08: if A is negative, restore by adding M back
     if _sign_bit(A, bits) == 1:
         A = (A + M) & mask
         trace.append({
@@ -272,7 +269,7 @@ def non_restoring_division(dividend, divisor, bits, binary_input=False):
 
 
 # ---------------------------------------------------------------------------
-# DEMO / CLI
+# DEMO / CLI for testing purposes
 # ---------------------------------------------------------------------------
 
 def print_conversion(decimal, bits):
@@ -318,7 +315,7 @@ if __name__ == "__main__":
     # Sample runs demonstrating each feature
     print_conversion(25, 8)
     print_conversion(-25, 8)
-    print_conversion(500, 8)   # deliberately out of range -> triggers error checking
+    print_conversion(500, 8)   # deliberately out of range as thiss will now trigger error checking
 
-    print_multiplication_trace(11, 13, 8)  # (11 x 13 = 143)
-    print_division_trace(11, 3, 8)         # 11 / 3 -> quotient 3, remainder 2
+    print_multiplication_trace(11, 13, 8)  # (11 x 13 = 143) with 8 bits
+    print_division_trace(11, 3, 8)         # 11 / 3 -> quotient 3, remainder 2 with 8 bits as well
