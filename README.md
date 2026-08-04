@@ -166,3 +166,6 @@ Each section displays:
 5. Return binary and decimal representation of the quotient and remainder
 
 n. Unlisted YouTube Link
+
+### Declaration of AI Usage
+AI Tools including Claude and ChatGPT were utilized to research ideas and insights on the theme and layout for the website; these include the color scheme, font styles, and divider dimensions. They were also utilized to check for correct grammar output and tone in the reports and documentation.
