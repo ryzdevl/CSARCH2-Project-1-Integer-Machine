@@ -46,7 +46,7 @@ function wireBitsPresets(groupEl) {
     });
   });
 
-  // Typing the custom value for bits will clears the preset highlight unless it matches one
+  // Typing a custom value clears the preset highlight unless it matches one
   input.addEventListener('input', () => {
     buttons.forEach(b => b.classList.toggle('active', b.dataset.val === input.value));
   });
@@ -129,7 +129,7 @@ document.getElementById('conv-run').addEventListener('click', async () => {
     } else {
       renderBitCells('conv-unsigned-cells', data.unsigned_binary);
       unsignedSummary.textContent =
-        `${data.decimal} = ${data.unsigned_binary} (${data.bits}-bit unsigned)`;
+        `✓ ${data.decimal} = ${data.unsigned_binary}₂ (${data.bits}-bit unsigned)`;
     }
 
     const signedCells = document.getElementById('conv-signed-cells');
@@ -145,7 +145,7 @@ document.getElementById('conv-run').addEventListener('click', async () => {
     } else {
       renderBitCells('conv-signed-cells', data.signed_binary);
       signedSummary.textContent =
-        `${data.decimal} = ${data.signed_binary} (${data.bits}-bit signed, two's complement)`;
+        `✓ ${data.decimal} = ${data.signed_binary}₂ (${data.bits}-bit signed, two's complement)`;
     }
   } catch (err) {
     showError('conv-error', err.message);
@@ -153,7 +153,7 @@ document.getElementById('conv-run').addEventListener('click', async () => {
 });
 
 // ---------------------------------------------------------------------------
-// trace-stepper factory (shared by Multiply and Divide functions)
+// Generic trace-stepper factory (shared by Multiply and Divide)
 // ---------------------------------------------------------------------------
 
 function makeStepper(config) {
@@ -168,7 +168,7 @@ function makeStepper(config) {
     const row = config.trace[index];
     config.registerKeys.forEach(rk => {
       let val = row[rk.key];
-      if (rk.key === 'Q-1') {
+      if (rk.key === 'E' || rk.key === 'Q-1') {
         val = String(val); // single bit, 0 or 1
       }
       renderBitCells(rk.cellsId, val);
@@ -178,7 +178,7 @@ function makeStepper(config) {
     prevBtn.disabled = index === 0;
     nextBtn.disabled = index === config.trace.length - 1;
 
-    // highlights the current row in the trace table
+    // highlight current row in the trace table
     const rows = config.tableBodyEl.querySelectorAll('tr');
     rows.forEach((r, i) => r.classList.toggle('current-step', i === index));
     if (rows[index]) {
@@ -206,7 +206,7 @@ function populateTraceTable(tbody, trace, columns) {
 }
 
 // ---------------------------------------------------------------------------
-// MULTIPLICATION (Booth's Algorithm)
+// MULTIPLICATION (Sequential Circuit Binary Multiplier)
 // ---------------------------------------------------------------------------
 
 document.getElementById('mul-run').addEventListener('click', async () => {
@@ -231,6 +231,7 @@ document.getElementById('mul-run').addEventListener('click', async () => {
     document.getElementById('mul-results').style.display = 'block';
     document.getElementById('mul-product-bin').textContent = data.product_binary;
     document.getElementById('mul-product-dec').textContent = data.product_decimal;
+    document.getElementById('mul-sign').textContent = data.result_negative ? 'Negative (−)' : 'Positive (+)';
 
     const tbody = document.querySelector('#mul-trace-table tbody');
     populateTraceTable(tbody, data.trace, ['step', 'operation', 'A', 'Q', 'Q-1']);
